@@ -54,7 +54,7 @@ type ReplyButton struct {
 
 type Node struct {
 	ID   string                 `json:"id"`
-	Type string                 `json:"types"`
+	Type string                 `json:"type"`
 	Data map[string]interface{} `json:"data"`
 }
 
