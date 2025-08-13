@@ -1,0 +1,69 @@
+# ==== Go build artifacts & caches ====
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go build output
+/bin/
+/build/
+/dist/
+
+# Coverage & test
+coverage*
+cover.*
+*.coverprofile
+*.cov
+*.gcov
+*.lcov
+*.prof
+*.pprof
+
+# Temporary / cache
+/tmp/
+*.tmp
+*.swp
+*.swo
+
+# ==== Environment & secrets ====
+.env
+.env.*
+!.env.example
+*.local
+*.secret
+*.secrets
+*.key
+*.pem
+
+# ==== Logs & PIDs ====
+*.log
+logs/
+*.pid
+
+# ==== IDE / Editor ====
+.vscode/
+.idea/
+.fleet/
+.history/
+*.iml
+
+# ==== OS junk ====
+.DS_Store
+Thumbs.db
+
+# ==== Docker (optional) ====
+# Uncomment if you keep local overrides
+# docker-compose.override.yml
+
+# ==== Postman ====
+# Keep collections, ignore environments that may contain secrets
+*.postman_environment.json
+!*.postman_collection.json
+
+# ==== Misc tools ====
+# Air (live reload) tmp dir (adjust if you configure differently)
+.air*
+.air/
