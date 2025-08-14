@@ -50,6 +50,13 @@ func main() {
 	})
 	kv := store.NewRedisStore(rdb)
 
+	// PG
+	pg := mustPGPool(cfg.DatabaseURL)
+	defer pg.Close()
+
+	igTokenLookup := repo.NewIGTokenLookup(kv, pg)
+	httpserver.SetIGTokenLookup(igTokenLookup)
+
 	// Asynq
 	asynqDB := cfg.AsynqRedisDB
 	asynqOpt := asynq.RedisClientOpt{
@@ -77,10 +84,6 @@ func main() {
 			log.Fatalf("asynq server error: %v", err)
 		}
 	}()
-
-	// PG
-	pg := mustPGPool(cfg.DatabaseURL)
-	defer pg.Close()
 
 	// HTTP server
 	e := echo.New()

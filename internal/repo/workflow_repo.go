@@ -10,6 +10,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type WorkflowRepo interface {
+	ListActiveWorkflowsForIGAccount(igBusinessID string) ([]*types.WorkflowDefinition, error)
+}
+
 type PGWorkflowRepo struct {
 	pool *pgxpool.Pool
 }

@@ -1,17 +1,20 @@
 package httpserver
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"ig-webhook/internal/processor"
+	"ig-webhook/internal/repo"
 	"ig-webhook/internal/store"
 	"ig-webhook/internal/types"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
@@ -54,14 +57,14 @@ func (h *WebhookHandler) HandleInstagram(c echo.Context) error {
 	}
 
 	// 3) Quick ACK — proses async agar IG dapat response 200
-	go h.process(c, bodyBytes)
+	go h.process(bodyBytes)
 
 	return c.NoContent(http.StatusOK)
 }
 
-func (h *WebhookHandler) process(ctx echo.Context, body []byte) {
+func (h *WebhookHandler) process(body []byte) {
 
-	stdCtx := ctx.Request().Context()
+	stdCtx := context.Background()
 
 	var bodyRq types.IGWebhookEnvelope
 	if err := json.Unmarshal(body, &bodyRq); err != nil {
@@ -119,7 +122,25 @@ func mapPageToBrand(pageID string) string {
 	return "brand-" + pageID
 }
 
+var igTokenLkp *repo.IGTokenLookup
+
+func SetIGTokenLookup(l *repo.IGTokenLookup) {
+	igTokenLkp = l
+}
+
 func lookupIGToken(brandID string) string {
-	// TODO: ambil dari DB/KMS. Untuk sementara dari ENV
-	return os.Getenv("IG_PAGE_ACCESS_TOKEN")
+	// fallback env jika belum di-inject / error
+	fallback := os.Getenv("IG_PAGE_ACCESS_TOKEN")
+	if igTokenLkp == nil || brandID == "" {
+		return fallback
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	token, err := igTokenLkp.Lookup(ctx, brandID)
+	if err != nil || token == "" {
+		return fallback
+	}
+	return token
 }

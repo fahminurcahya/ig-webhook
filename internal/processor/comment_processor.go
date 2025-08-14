@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"ig-webhook/internal/queue"
+	"ig-webhook/internal/repo"
 	"ig-webhook/internal/store"
 	"ig-webhook/internal/types"
 	"log"
@@ -27,7 +28,7 @@ type CommentEvent struct {
 }
 
 type WorkflowRepo interface {
-	types.WorkflowRepo
+	repo.WorkflowRepo
 }
 
 type CommentProcessor struct {

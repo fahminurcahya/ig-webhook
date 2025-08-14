@@ -68,8 +68,3 @@ type WorkflowDefinition struct {
 	Nodes []Node `json:"nodes"`
 	Edges []Edge `json:"edges"`
 }
-
-type WorkflowRepo interface {
-	// Ambil workflow aktif yang punya trigger IG_COMMENT_RECEIVED untuk brand/account tertentu
-	ListActiveWorkflowsForIGAccount(igBusinessID string) ([]*WorkflowDefinition, error)
-}
